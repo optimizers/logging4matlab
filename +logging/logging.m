@@ -32,6 +32,10 @@ classdef logging < handle
        logging.logging.CRITICAL, logging.logging.OFF}, ...
       {'ALL', 'TRACE', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL', 'OFF'});
   end
+  
+  properties (SetAccess=immutable)
+      level_numbers;
+  end
 
   properties (SetAccess=protected)
     name;
@@ -67,15 +71,11 @@ classdef logging < handle
     end
 
     function setCommandWindowLevel(self, level)
-      if logging.logging.levels.isKey(level)
-        self.commandWindowLevel = level;
-      end
+      self.commandWindowLevel = self.getLevelNumber(level);
     end
 
     function setLogLevel(self, level)
-      if logging.logging.levels.isKey(level) && (self.logfid >= 0)
-        self.logLevel = level;
-      end
+      self.logLevel = self.getLevelNumber(level);
     end
 
     function trace(self, message)
@@ -124,6 +124,8 @@ classdef logging < handle
       else
         self.logLevel = logging.logging.OFF;
       end
+      self.level_numbers = containers.Map(...
+          self.levels.values, self.levels.keys);
     end
 
     function delete(self)
@@ -133,6 +135,7 @@ classdef logging < handle
     end
 
     function writeLog(self, level, caller, message)
+      level = self.getLevelNumber(level);
       if self.commandWindowLevel <= level || self.logLevel <= level
         timestamp = datestr(now, 'yyyy-mm-dd HH:MM:SS,FFF');
         levelStr = logging.logging.levels(level);
@@ -150,6 +153,18 @@ classdef logging < handle
 
       if self.logLevel <= level
         fprintf(self.logfid, logline);
+      end
+    end        
+  end
+  
+  methods (Hidden)
+    function level = getLevelNumber(self, level)
+      if logging.logging.levels.isKey(level)
+        % We don't need to do anything here
+      elseif self.level_numbers.isKey(level)
+        level = self.level_numbers(level);
+      else
+        error('Invalid log level');
       end
     end
   end
