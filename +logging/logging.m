@@ -133,7 +133,7 @@ classdef logging < handle
     end
 
     function delete(self)
-      if self.logLevel < logging.logging.OFF
+      if self.logfid < 0
         fclose(self.logfid);
       end
     end
