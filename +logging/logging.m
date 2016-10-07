@@ -44,12 +44,20 @@ classdef logging < handle
   properties (SetAccess=protected)
     name;
     fullpath = 'logging.log';  % Default log file
-    commandWindowLevel = logging.logging.INFO;
-    logLevel = logging.logging.INFO;
     logfmt = '%-s %-23s %-8s %s\n';
     logfid = -1;
     logcolors = logging.logging.colors_terminal;
     using_terminal = ~desktop('-inuse');
+  end
+
+  properties (Hidden,SetAccess=protected)
+      logLevel_ = logging.logging.INFO;
+      commandWindowLevel_ = logging.logging.INFO;
+  end
+  
+  properties (Dependent)
+      logLevel;
+      commandWindowLevel;
   end
 
   methods(Static)
@@ -68,21 +76,17 @@ classdef logging < handle
 
       if self.logfid < 0
         warning(['Problem with supplied logfile path: ' message]);
-        self.logLevel = logging.logging.OFF;
+        self.logLevel_ = logging.logging.OFF;
       end
 
       self.fullpath = logPath;
     end
 
     function setCommandWindowLevel(self, level)
-      self.commandWindowLevel = self.getLevelNumber(level);
+      self.commandWindowLevel = level;
     end
 
     function setLogLevel(self, level)
-      level = self.getLevelNumber(level);
-      if level > logging.logging.OFF && self.fid < 0
-          error('Cannot enable file logging without valid logfile');
-      end
       self.logLevel = level;
     end
 
@@ -130,7 +134,7 @@ classdef logging < handle
           error('Logger logfile path must be a string');
         end
       else
-        self.logLevel = logging.logging.OFF;
+        self.logLevel_ = logging.logging.OFF;
       end
       self.level_numbers = containers.Map(...
           self.levels.values, self.levels.keys);
@@ -144,13 +148,13 @@ classdef logging < handle
 
     function writeLog(self, level, caller, message)
       level = self.getLevelNumber(level);
-      if self.commandWindowLevel <= level || self.logLevel <= level
+      if self.commandWindowLevel_ <= level || self.logLevel_ <= level
         timestamp = datestr(now, self.datefmt);
         levelStr = logging.logging.levels(level);
         logline = sprintf(self.logfmt, caller, timestamp, levelStr, message);
       end
 
-      if self.commandWindowLevel <= level
+      if self.commandWindowLevel_ <= level
         if self.using_terminal
           level_color = self.level_colors(level);
         else
@@ -159,7 +163,7 @@ classdef logging < handle
         fprintf(self.logcolors(level_color), logline);
       end
 
-      if self.logLevel <= level
+      if self.logLevel_ <= level
         fprintf(self.logfid, logline);
       end
     end        
@@ -172,6 +176,28 @@ classdef logging < handle
         end
         self.datefmt = fmt;
     end
+    
+    function set.logLevel(self, level)
+      level = self.getLevelNumber(level);
+      if level > logging.logging.OFF && self.logfid < 0
+          error('Cannot enable file logging without valid logfile');
+      end
+      self.logLevel_ = level;
+    end
+    
+    function level = get.logLevel(self)
+        level = self.logLevel_;
+    end
+    
+    function set.commandWindowLevel(self, level)
+      self.commandWindowLevel_ = self.getLevelNumber(level);
+    end
+    
+    function level = get.commandWindowLevel(self)
+        level = self.commandWindowLevel_;
+    end
+        
+        
   end
   
   methods (Hidden)
