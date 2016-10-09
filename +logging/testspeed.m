@@ -1,6 +1,7 @@
 function testspeed(logPath)
 
-  L = logging.getLogger(logPath);
+  opts.path = logPath;
+  L = logging.getLogger('testlogger', opts);
 
   L.setCommandWindowLevel(L.TRACE);
   L.setLogLevel(L.OFF);
