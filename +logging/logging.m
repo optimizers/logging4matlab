@@ -38,7 +38,7 @@ classdef logging < handle
   end
   
   properties
-      datefmt;
+      datefmt = 'yyyy-mm-dd HH:MM:SS,FFF';
   end
 
   properties (SetAccess=protected)
