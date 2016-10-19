@@ -36,10 +36,6 @@ classdef logging < handle
   properties (SetAccess=immutable)
       level_numbers;
   end
-  
-  properties
-      datefmt = 'yyyy-mm-dd HH:MM:SS,FFF';
-  end
 
   properties (SetAccess=protected)
     name;
@@ -51,11 +47,13 @@ classdef logging < handle
   end
 
   properties (Hidden,SetAccess=protected)
+      datefmt_ = 'yyyy-mm-dd HH:MM:SS,FFF';
       logLevel_ = logging.logging.INFO;
       commandWindowLevel_ = logging.logging.INFO;
   end
   
   properties (Dependent)
+      datefmt;
       logLevel;
       commandWindowLevel;
   end
@@ -149,7 +147,7 @@ classdef logging < handle
     function writeLog(self, level, caller, message)
       level = self.getLevelNumber(level);
       if self.commandWindowLevel_ <= level || self.logLevel_ <= level
-        timestamp = datestr(now, self.datefmt);
+        timestamp = datestr(now, self.datefmt_);
         levelStr = logging.logging.levels(level);
         logline = sprintf(self.logfmt, caller, timestamp, levelStr, message);
       end
@@ -174,7 +172,11 @@ classdef logging < handle
         catch
             error('Invalid date format');
         end
-        self.datefmt = fmt;
+        self.datefmt_ = fmt;
+    end
+
+    function fmt = get.datefmt(self)
+        fmt = self.datefmt_;
     end
     
     function set.logLevel(self, level)
