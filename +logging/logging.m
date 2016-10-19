@@ -138,6 +138,7 @@ classdef logging < handle
       levelkeys = self.levels.keys;
       self.level_numbers = containers.Map(...
           self.levels.values, levelkeys);
+      levelkeys = cell2mat(self.levels.keys);
       self.level_range = [min(levelkeys), max(levelkeys)];
     end
 
