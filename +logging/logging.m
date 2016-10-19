@@ -35,6 +35,7 @@ classdef logging < handle
   
   properties (SetAccess=immutable)
       level_numbers;
+      level_range;
   end
 
   properties (SetAccess=protected)
@@ -134,8 +135,10 @@ classdef logging < handle
       else
         self.logLevel_ = logging.logging.OFF;
       end
+      levelkeys = self.levels.keys;
       self.level_numbers = containers.Map(...
-          self.levels.values, self.levels.keys);
+          self.levels.values, levelkeys);
+      self.level_range = [min(levelkeys), max(levelkeys)];
     end
 
     function delete(self)
@@ -204,8 +207,8 @@ classdef logging < handle
   
   methods (Hidden)
     function level = getLevelNumber(self, level)
-      if logging.logging.levels.isKey(level)
-        % We don't need to do anything here
+      if isinteger(level) && self.level_range(1) <= level && level <= self.level_range(2)
+        return
       elseif self.level_numbers.isKey(level)
         level = self.level_numbers(level);
       else
