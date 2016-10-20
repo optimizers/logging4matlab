@@ -210,10 +210,8 @@ classdef logging < handle
     function level = getLevelNumber(self, level)
       if isinteger(level) && self.level_range(1) <= level && level <= self.level_range(2)
         return
-      elseif self.level_numbers.isKey(level)
-        level = self.level_numbers(level);
       else
-        error('Invalid log level');
+        level = self.level_numbers(level);
       end
     end
   end
