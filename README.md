@@ -52,6 +52,44 @@ to log output at different levels:
   This level is used for non-critical errors that can endanger correctness.
 * `logger.critical(string)`: output `string` at level CRITICAL
   This level is used for critical errors that definitely endanger correctness.
+  
+The following utility methods are also available:
+
+* `logger.setFileName(string)`: set the log file to `string`.
+  This can be used to specify or change the file logs are saved to.
+* `logger.setCommandWindowLevel(level)`: set the command window log level to `level`.
+  Only log entries with a level greater than or equal to `level` will be displayed.
+  `level` can either be a string or an integer.
+* `logger.setLogLevel(level)`: set the file log level to `level`.
+  Only log entries with a level greater than or equal to `level` will be saved.
+  `level` can either be a string or an integer.
+  Note that even if the level is changed, nothing will be written if a valid
+  filename has not been set for the log.
+
+The following properties can be read or written:
+
+* `logger.datefmt`: the date/time format string.
+  This contains the date/time format string used by the logs.
+  The format must be compatible with the built-in `datestr` function.
+* `logger.commandWindowLevel`: the command window log level.
+  Only log entries with a level greater than or equal to `level` will be displayed.
+  It can be set with either a string or an integer, but will always return an integer.
+* `logger.logLevel`: the file log level.
+  Only log entries with a level greater than or equal to `level` will be saved.
+  It can be set with either a string or an integer, but will always return an integer.
+
+The following properties are read-only (note that these are called in a different way):
+
+* `logging.logging.ALL`: The integer value for the `ALL` level (0).
+* `logging.logging.TRACE`: The integer value for the `TRACE` level (1).
+* `logging.logging.DEBUG`: The integer value for the `DEBUG` level (2).
+* `logging.logging.INFO`: The integer value for the `INFO` level (3).
+* `logging.logging.WARNING`: The integer value for the `WARNING` level (4).
+* `logging.logging.ERROR`: The integer value for the `ERROR` level (5).
+* `logging.logging.CRITICAL`: The integer value for the `CRITICAL` level (6).
+* `logging.logging.OFF`: The integer value for the `OFF` level (6).
+  Note that there is no corresponding write method for this level, 
+  so if this level is set no logging will take place.
 
 ## Examples
 
