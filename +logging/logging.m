@@ -208,6 +208,15 @@ classdef logging < handle
   
   methods (Hidden)
     function level = getLevelNumber(self, level)
+    % LEVEL = GETLEVELNUMBER(LEVEL)
+    %
+    % Converts charecter-based level names to level numbers
+    % used internally by logging.
+    %
+    % If given a number, it makes sure the number is valid
+    % then returns it unchanged.
+    %
+    % This allows users to specify levels by name or number.
       if isinteger(level) && self.level_range(1) <= level && level <= self.level_range(2)
         return
       else
