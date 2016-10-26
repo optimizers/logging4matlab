@@ -34,8 +34,8 @@ classdef logging < handle
   end
   
   properties (SetAccess=immutable)
-      level_numbers;
-      level_range;
+    level_numbers;
+    level_range;
   end
 
   properties (SetAccess=protected)
@@ -48,15 +48,15 @@ classdef logging < handle
   end
 
   properties (Hidden,SetAccess=protected)
-      datefmt_ = 'yyyy-mm-dd HH:MM:SS,FFF';
-      logLevel_ = logging.logging.INFO;
-      commandWindowLevel_ = logging.logging.INFO;
+    datefmt_ = 'yyyy-mm-dd HH:MM:SS,FFF';
+    logLevel_ = logging.logging.INFO;
+    commandWindowLevel_ = logging.logging.INFO;
   end
   
   properties (Dependent)
-      datefmt;
-      logLevel;
-      commandWindowLevel;
+    datefmt;
+    logLevel;
+    commandWindowLevel;
   end
 
   methods(Static)
@@ -171,28 +171,28 @@ classdef logging < handle
     end        
     
     function set.datefmt(self, fmt)
-        try
-            datestr(now(), fmt);
-        catch
-            error('Invalid date format');
-        end
-        self.datefmt_ = fmt;
+      try
+        datestr(now(), fmt);
+      catch
+        error('Invalid date format');
+      end
+      self.datefmt_ = fmt;
     end
 
     function fmt = get.datefmt(self)
-        fmt = self.datefmt_;
+      fmt = self.datefmt_;
     end
     
     function set.logLevel(self, level)
       level = self.getLevelNumber(level);
       if level > logging.logging.OFF && self.logfid < 0
-          error('Cannot enable file logging without valid logfile');
+        error('Cannot enable file logging without valid logfile');
       end
       self.logLevel_ = level;
     end
     
     function level = get.logLevel(self)
-        level = self.logLevel_;
+      level = self.logLevel_;
     end
     
     function set.commandWindowLevel(self, level)
@@ -200,7 +200,7 @@ classdef logging < handle
     end
     
     function level = get.commandWindowLevel(self)
-        level = self.commandWindowLevel_;
+      level = self.commandWindowLevel_;
     end
         
         
