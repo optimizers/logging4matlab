@@ -32,16 +32,31 @@ classdef logging < handle
        logging.logging.CRITICAL, logging.logging.OFF}, ...
       {'ALL', 'TRACE', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL', 'OFF'});
   end
+  
+  properties (SetAccess=immutable)
+    level_numbers;
+    level_range;
+  end
 
   properties (SetAccess=protected)
     name;
     fullpath = 'logging.log';  % Default log file
-    commandWindowLevel = logging.logging.INFO;
-    logLevel = logging.logging.INFO;
     logfmt = '%-s %-23s %-8s %s\n';
     logfid = -1;
     logcolors = logging.logging.colors_terminal;
     using_terminal = ~desktop('-inuse');
+  end
+
+  properties (Hidden,SetAccess=protected)
+    datefmt_ = 'yyyy-mm-dd HH:MM:SS,FFF';
+    logLevel_ = logging.logging.INFO;
+    commandWindowLevel_ = logging.logging.INFO;
+  end
+  
+  properties (Dependent)
+    datefmt;
+    logLevel;
+    commandWindowLevel;
   end
 
   methods(Static)
@@ -60,22 +75,18 @@ classdef logging < handle
 
       if self.logfid < 0
         warning(['Problem with supplied logfile path: ' message]);
-        self.logLevel = logging.logging.OFF;
+        self.logLevel_ = logging.logging.OFF;
       end
 
       self.fullpath = logPath;
     end
 
     function setCommandWindowLevel(self, level)
-      if logging.logging.levels.isKey(level)
-        self.commandWindowLevel = level;
-      end
+      self.commandWindowLevel = level;
     end
 
     function setLogLevel(self, level)
-      if logging.logging.levels.isKey(level) && (self.logfid >= 0)
-        self.logLevel = level;
-      end
+      self.logLevel = level;
     end
 
     function trace(self, message)
@@ -122,24 +133,30 @@ classdef logging < handle
           error('Logger logfile path must be a string');
         end
       else
-        self.logLevel = logging.logging.OFF;
+        self.logLevel_ = logging.logging.OFF;
       end
+      levelkeys = self.levels.keys;
+      self.level_numbers = containers.Map(...
+          self.levels.values, levelkeys);
+      levelkeys = cell2mat(self.levels.keys);
+      self.level_range = [min(levelkeys), max(levelkeys)];
     end
 
     function delete(self)
-      if self.logLevel < logging.logging.OFF
+      if self.logfid < 0
         fclose(self.logfid);
       end
     end
 
     function writeLog(self, level, caller, message)
-      if self.commandWindowLevel <= level || self.logLevel <= level
-        timestamp = datestr(now, 'yyyy-mm-dd HH:MM:SS,FFF');
+      level = self.getLevelNumber(level);
+      if self.commandWindowLevel_ <= level || self.logLevel_ <= level
+        timestamp = datestr(now, self.datefmt_);
         levelStr = logging.logging.levels(level);
         logline = sprintf(self.logfmt, caller, timestamp, levelStr, message);
       end
 
-      if self.commandWindowLevel <= level
+      if self.commandWindowLevel_ <= level
         if self.using_terminal
           level_color = self.level_colors(level);
         else
@@ -148,8 +165,62 @@ classdef logging < handle
         fprintf(self.logcolors(level_color), logline);
       end
 
-      if self.logLevel <= level
+      if self.logLevel_ <= level
         fprintf(self.logfid, logline);
+      end
+    end        
+    
+    function set.datefmt(self, fmt)
+      try
+        datestr(now(), fmt);
+      catch
+        error('Invalid date format');
+      end
+      self.datefmt_ = fmt;
+    end
+
+    function fmt = get.datefmt(self)
+      fmt = self.datefmt_;
+    end
+    
+    function set.logLevel(self, level)
+      level = self.getLevelNumber(level);
+      if level > logging.logging.OFF && self.logfid < 0
+        error('Cannot enable file logging without valid logfile');
+      end
+      self.logLevel_ = level;
+    end
+    
+    function level = get.logLevel(self)
+      level = self.logLevel_;
+    end
+    
+    function set.commandWindowLevel(self, level)
+      self.commandWindowLevel_ = self.getLevelNumber(level);
+    end
+    
+    function level = get.commandWindowLevel(self)
+      level = self.commandWindowLevel_;
+    end
+        
+        
+  end
+  
+  methods (Hidden)
+    function level = getLevelNumber(self, level)
+    % LEVEL = GETLEVELNUMBER(LEVEL)
+    %
+    % Converts charecter-based level names to level numbers
+    % used internally by logging.
+    %
+    % If given a number, it makes sure the number is valid
+    % then returns it unchanged.
+    %
+    % This allows users to specify levels by name or number.
+      if isinteger(level) && self.level_range(1) <= level && level <= self.level_range(2)
+        return
+      else
+        level = self.level_numbers(level);
       end
     end
   end
