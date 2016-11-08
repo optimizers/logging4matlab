@@ -143,7 +143,7 @@ classdef logging < handle
     end
 
     function delete(self)
-      if self.logfid < 0
+      if self.logfid > -1
         fclose(self.logfid);
       end
     end
