@@ -40,7 +40,7 @@ An instance of the `logging` class is created using the `logging.getLogger` func
 The first argument for this function must be the name of the logger. Four additional
 optional arguments are also available.  These can either be provided as name/value
 pairs (such as `logger.getlogger(name, 'path', path)`) or as a struct where the
-field names are the names of the argument (such as logger.getlogger(name, struct('path', path)`).
+field names are the names of the argument (such as `logger.getlogger(name, struct('path', path)`).
 The available arguments are:
 
 * `path`: The path to the log file.  If this is not specified or is an empty string,
