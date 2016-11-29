@@ -119,26 +119,31 @@ classdef logging < handle
       self.writeLog(self.CRITICAL, caller_name, message);
     end
 
-    function self = logging(name, varargin)      
-      p = inputParser();
-      p.addRequired('name', @ischar);
-      p.addParameter('path', '', @ischar);
-      p.parse(name, varargin{:});
-      r = p.Results; 
-      disp(r)
-      
-      self.name = r.name;   
-      if ~isempty(r.path)
-        self.setFilename(r.path);  % Opens the log file.
-      else
-        self.logLevel_ = logging.logging.OFF;
-      end
-      
+    function self = logging(name, varargin)
       levelkeys = self.levels.keys;
       self.level_numbers = containers.Map(...
           self.levels.values, levelkeys);
       levelkeys = cell2mat(self.levels.keys);
       self.level_range = [min(levelkeys), max(levelkeys)];
+      
+      p = inputParser();
+      p.addRequired('name', @ischar);
+      p.addParameter('path', '', @ischar);
+      p.addParameter('logLevel', self.logLevel);
+      p.addParameter('commandWindowLevel', self.commandWindowLevel);
+      p.addParameter('datefmt', self.datefmt_);
+      p.parse(name, varargin{:});
+      r = p.Results; 
+      
+      self.name = r.name;
+      self.commandWindowLevel = r.commandWindowLevel;
+      self.datefmt = r.datefmt;
+      if ~isempty(r.path)
+        self.setFilename(r.path);  % Opens the log file.
+        self.logLevel = r.logLevel;
+      else
+        self.logLevel_ = logging.logging.OFF;
+      end
     end
 
     function delete(self)
