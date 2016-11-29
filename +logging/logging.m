@@ -119,22 +119,21 @@ classdef logging < handle
       self.writeLog(self.CRITICAL, caller_name, message);
     end
 
-    function self = logging(name, opts)
-      if ischar(name),
-        self.name = name;
-      else
-        error('Logger name must be a string');
-      end
-      if nargin > 1 && isfield(opts, 'path')
-        display(opts, 'opts')
-        if ischar(opts.path)
-          self.setFilename(opts.path);  % Opens the log file.
-        else
-          error('Logger logfile path must be a string');
-        end
+    function self = logging(name, varargin)      
+      p = inputParser();
+      p.addRequired('name', @ischar);
+      p.addParameter('path', '', @ischar);
+      p.parse(name, varargin{:});
+      r = p.Results; 
+      disp(r)
+      
+      self.name = r.name;   
+      if ~isempty(r.path)
+        self.setFilename(r.path);  % Opens the log file.
       else
         self.logLevel_ = logging.logging.OFF;
       end
+      
       levelkeys = self.levels.keys;
       self.level_numbers = containers.Map(...
           self.levels.values, levelkeys);
