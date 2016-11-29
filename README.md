@@ -36,6 +36,28 @@ The format is as follows:
 
 ## API
 
+An instance of the `logging` class is created using the `logging.getLogger` function.
+The first argument for this function must be the name of the logger. Four additional
+optional arguments are also available.  These can either be provided as name/value
+pairs (such as `logger.getlogger(name, 'path', path)`) or as a struct where the
+field names are the names of the argument (such as logger.getlogger(name, struct('path', path)`).
+The available arguments are:
+
+* `path`: The path to the log file.  If this is not specified or is an empty string,
+  then logging to a file is disabled.
+  This must be a string.
+* `logLevel`: set the file log level.
+  Only log entries with a level greater than or equal to this level will be saved.
+  This can either be a string or an integer.
+  Note that this argument will be ignored if `path` is empty or not specified.
+* `commandWindowLevel`: set the command window log level.
+  Only log entries with a level greater than or equal to this level will be displayed.
+  This can either be a string or an integer.
+* `datefmt`: the date/time format string.
+  This contains the date/time format string used by the logs.
+  The format must be compatible with the built-in `datestr` function.
+  This must be a string.
+
 If `logger` is an instance of the `logging` class, the following methods can be used
 to log output at different levels:
 
@@ -114,7 +136,7 @@ A logger's assigned level for the command window (or terminal) can be changed:
 A logger can also output to file:
 
 ```matlab
->> logger2 = logging.getLogger('myotherlogger', struct('path', '/tmp/logger2.log'))
+>> logger2 = logging.getLogger('myotherlogger', 'path', '/tmp/logger2.log')
 >> logger.setLogLevel(logging.logging.WARNING)
 ```
 
