@@ -179,6 +179,10 @@ classdef logging < handle
       if self.commandWindowLevel_ <= level || self.logLevel_ <= level
         timestamp = datestr(now, self.datefmt_);
         levelStr = logging.logging.levels(level);
+        [rows, ~] = size(message);
+        if rows > 1
+            message = sprintf('\n %s', evalc('disp(message)'));
+        end
         logline = sprintf(self.logfmt, caller, timestamp, levelStr, message);
       end
 
