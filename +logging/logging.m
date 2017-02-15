@@ -88,33 +88,55 @@ classdef logging < handle
     function setLogLevel(self, level)
       self.logLevel = level;
     end
+    
+    function tf = ignoreLogging(self)
+        tf = self.logLevel + self.commandWindowLevel == 2*self.OFF;
+    end
 
     function trace(self, message)
+      if self.ignoreLogging()
+           return;
+      end
       [caller_name, ~] = self.getCallerInfo();
       self.writeLog(self.TRACE, caller_name, message);
     end
 
     function debug(self, message)
+      if self.ignoreLogging()
+           return;
+      end
       [caller_name, ~] = self.getCallerInfo();
       self.writeLog(self.DEBUG, caller_name, message);
     end
 
     function info(self, message)
+      if self.ignoreLogging()
+           return;
+      end
       [caller_name, ~] = self.getCallerInfo();
       self.writeLog(self.INFO, caller_name, message);
     end
 
     function warn(self, message)
+       if self.ignoreLogging()
+           return;
+       end
       [caller_name, ~] = self.getCallerInfo();
       self.writeLog(self.WARNING, caller_name, message);
     end
 
     function error(self, message)
+       if self.ignoreLogging()
+           return;
+       end
       [caller_name, ~] = self.getCallerInfo();
       self.writeLog(self.ERROR, caller_name, message);
     end
 
     function critical(self, message)
+       if self.ignoreLogging()
+           return;
+       end
       [caller_name, ~] = self.getCallerInfo();
       self.writeLog(self.CRITICAL, caller_name, message);
     end
