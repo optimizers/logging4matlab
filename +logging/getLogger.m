@@ -1,4 +1,4 @@
-function obj = getLogger(name, varargin)
+function [obj, deleteLogger] = getLogger(name, varargin)
   persistent loggers;
   logger_found = false;
   if ~isempty(loggers)
@@ -13,5 +13,12 @@ function obj = getLogger(name, varargin)
   if ~logger_found
     obj = logging.logging(name, varargin{:});
     loggers = [loggers, obj];
+  end
+  
+  deleteLogger = @() deleteLogInstance();
+  
+  function deleteLogInstance() 
+      delete(loggers);
+      clear('loggers');
   end
 end
