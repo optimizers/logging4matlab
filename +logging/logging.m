@@ -96,7 +96,7 @@ classdef logging < handle
     end
     
     function tf = ignoreLogging(self)
-        tf = self.commandWindowLevel_ == logging.logging.OFF && self.logLevel_ == logging.logging.OFF;
+        tf = self.commandWindowLevel_ == self.OFF && self.logLevel_ == self.OFF;
     end
 
     function trace(self, message)
