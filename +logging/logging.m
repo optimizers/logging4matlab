@@ -60,7 +60,13 @@ classdef logging < handle
   end
 
   methods(Static)
-    function [name, line] = getCallerInfo()
+    function [name, line] = getCallerInfo(self)
+      
+      if nargin > 0 && self.ignoreLogging()
+          name = [];
+          line = [];
+          return
+      end
       [ST, ~] = dbstack();
       offset = min(size(ST, 1), 3);
       name = ST(offset).name;
@@ -90,54 +96,36 @@ classdef logging < handle
     end
     
     function tf = ignoreLogging(self)
-        tf = self.logLevel + self.commandWindowLevel == 2*self.OFF;
+        tf = self.commandWindowLevel_ == logging.logging.OFF && self.logLevel_ == logging.logging.OFF;
     end
 
     function trace(self, message)
-      if self.ignoreLogging()
-           return;
-      end
-      [caller_name, ~] = self.getCallerInfo();
+      [caller_name, ~] = self.getCallerInfo(self);
       self.writeLog(self.TRACE, caller_name, message);
     end
 
     function debug(self, message)
-      if self.ignoreLogging()
-           return;
-      end
-      [caller_name, ~] = self.getCallerInfo();
+      [caller_name, ~] = self.getCallerInfo(self);
       self.writeLog(self.DEBUG, caller_name, message);
     end
 
     function info(self, message)
-      if self.ignoreLogging()
-           return;
-      end
-      [caller_name, ~] = self.getCallerInfo();
+      [caller_name, ~] = self.getCallerInfo(self);
       self.writeLog(self.INFO, caller_name, message);
     end
 
     function warn(self, message)
-       if self.ignoreLogging()
-           return;
-       end
-      [caller_name, ~] = self.getCallerInfo();
+      [caller_name, ~] = self.getCallerInfo(self);
       self.writeLog(self.WARNING, caller_name, message);
     end
 
     function error(self, message)
-       if self.ignoreLogging()
-           return;
-       end
-      [caller_name, ~] = self.getCallerInfo();
+      [caller_name, ~] = self.getCallerInfo(self);
       self.writeLog(self.ERROR, caller_name, message);
     end
 
     function critical(self, message)
-       if self.ignoreLogging()
-           return;
-       end
-      [caller_name, ~] = self.getCallerInfo();
+      [caller_name, ~] = self.getCallerInfo(self);
       self.writeLog(self.CRITICAL, caller_name, message);
     end
 
