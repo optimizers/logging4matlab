@@ -29,4 +29,13 @@ function testspeed(logPath)
   end
   disp('1e3 logs when logging to file');
   toc;
+    L.setCommandWindowLevel(L.OFF);
+  L.setLogLevel(L.TRACE);
+  
+  tic;
+  for i=1:1e3
+    L.trace(@() 'test');
+  end
+  disp('1e3 logs when logging to file using function handle');
+  toc;
 end
