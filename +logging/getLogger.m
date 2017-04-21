@@ -18,7 +18,11 @@ function [obj, deleteLogger] = getLogger(name, varargin)
   deleteLogger = @() deleteLogInstance();
   
   function deleteLogInstance() 
-      delete(loggers);
-      clear('loggers');
+      if ~logger_found
+          error(['logger for file [ ' name ' ] not found'])
+      end
+      loggers = loggers(loggers ~= obj);
+      delete(obj);
+      clear('obj');
   end
 end
