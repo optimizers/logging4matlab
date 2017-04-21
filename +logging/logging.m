@@ -167,11 +167,8 @@ classdef logging < handle
       if self.commandWindowLevel_ <= level || self.logLevel_ <= level
         timestamp = datestr(now, self.datefmt_);
         levelStr = logging.logging.levels(level);
-        [rows, ~] = size(message);
-        if rows > 1
-            message = sprintf('\n %s', evalc('disp(message)'));
-        end
-        logline = sprintf(self.logfmt, caller, timestamp, levelStr, message);
+       
+        logline = sprintf(self.logfmt, caller, timestamp, levelStr, self.getMessage(message));
       end
 
       if self.commandWindowLevel_ <= level
@@ -241,5 +238,17 @@ classdef logging < handle
         level = self.level_numbers(level);
       end
     end
-  end
+      
+    function message = getMessage(~, message)
+    
+      if isa(message, 'function_handle')
+        message = message();
+      end
+      [rows, ~] = size(message);
+      if rows > 1
+        message = sprintf('\n %s', evalc('disp(message)'));
+      end
+    end
+  
+ end
 end
