@@ -44,7 +44,7 @@ classdef logging < handle
     logfmt = '%-s %-23s %-8s %s\n';
     logfid = -1;
     logcolors = logging.logging.colors_terminal;
-    using_terminal = ~desktop('-inuse');
+    using_terminal;
   end
 
   properties (Hidden,SetAccess=protected)
@@ -217,7 +217,15 @@ classdef logging < handle
     function level = get.commandWindowLevel(self)
       level = self.commandWindowLevel_;
     end
-        
+    
+    function tf = get.using_terminal(obj)
+      try 
+        tf = ~desktop('-inuse');
+      catch ex
+        % by default log to terminal
+        tf = false;
+      end  
+    end        
         
   end
   
