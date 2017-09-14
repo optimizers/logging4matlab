@@ -200,8 +200,8 @@ classdef logging < handle
     
     function set.logLevel(self, level)
       level = self.getLevelNumber(level);
-      if level > logging.logging.OFF && self.logfid < 0
-        error('Cannot enable file logging without valid logfile');
+      if level > logging.logging.OFF || level < logging.logging.ALL
+        error('invalid logging level');
       end
       self.logLevel_ = level;
     end
