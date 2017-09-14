@@ -184,7 +184,7 @@ classdef logging < handle
         fprintf(self.logcolors(level_color), logline);
       end
 
-      if self.logLevel_ <= level
+      if self.logLevel_ <= level && self.logfid > -1
         fprintf(self.logfid, logline);
       end
     end        
