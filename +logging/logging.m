@@ -154,6 +154,7 @@ classdef logging < handle
       else
         self.logLevel_ = logging.logging.OFF;
       end
+      % Use terminal logging if swing is disabled in matlab environment.
       swingError = javachk('swing');
       self.using_terminal = (~ isempty(swingError) && strcmp(swingError.identifier, 'MATLAB:javachk:thisFeatureNotAvailable')) || ~desktop('-inuse');
     end
