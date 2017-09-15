@@ -221,7 +221,6 @@ classdef logging < handle
       level = self.commandWindowLevel_;
     end
         
-        
   end
   
   methods (Hidden)
