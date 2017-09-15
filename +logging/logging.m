@@ -44,11 +44,7 @@ classdef logging < handle
     logfmt = '%-s %-23s %-8s %s\n';
     logfid = -1;
     logcolors = logging.logging.colors_terminal;
-    
-    % check if the matlab is started in -nodesktop mode with swing disabled
-    using_terminal = (~ isempty(javachk('swing')) && javachk('swing') &&...
-        strcmp(getfield(javachk('swing'), 'identifier'), 'MATLAB:javachk:thisFeatureNotAvailable')) ...
-        || ~ desktop('-inuse');
+    using_terminal;
   end
 
   properties (Hidden,SetAccess=protected)
@@ -158,6 +154,8 @@ classdef logging < handle
       else
         self.logLevel_ = logging.logging.OFF;
       end
+      swingError = javachk('swing');
+      self.using_terminal = (~ isempty(swingError) && strcmp(swingError.identifier, 'MATLAB:javachk:thisFeatureNotAvailable')) || ~desktop('-inuse');
     end
 
     function delete(self)
