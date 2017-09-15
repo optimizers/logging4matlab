@@ -44,7 +44,7 @@ classdef logging < handle
     logfmt = '%-s %-23s %-8s %s\n';
     logfid = -1;
     logcolors = logging.logging.colors_terminal;
-    using_terminal = ~desktop('-inuse');
+    using_terminal;
   end
 
   properties (Hidden,SetAccess=protected)
@@ -154,6 +154,9 @@ classdef logging < handle
       else
         self.logLevel_ = logging.logging.OFF;
       end
+      % Use terminal logging if swing is disabled in matlab environment.
+      swingError = javachk('swing');
+      self.using_terminal = (~ isempty(swingError) && strcmp(swingError.identifier, 'MATLAB:javachk:thisFeatureNotAvailable')) || ~desktop('-inuse');
     end
 
     function delete(self)
