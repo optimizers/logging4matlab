@@ -51,12 +51,15 @@ classdef logging < handle
     datefmt_ = 'yyyy-mm-dd HH:MM:SS,FFF';
     logLevel_ = logging.logging.INFO;
     commandWindowLevel_ = logging.logging.INFO;
+    bufferedMessages_ = cell(1);
+    bufferCursor_ = 1;
   end
   
   properties (Dependent)
     datefmt;
     logLevel;
     commandWindowLevel;
+    bufferingSize;
   end
 
   methods(Static)
@@ -93,6 +96,10 @@ classdef logging < handle
 
     function setLogLevel(self, level)
       self.logLevel = level;
+    end
+
+    function setBufferingSize(self, bufferSize)
+      self.bufferingSize = bufferSize;
     end
     
     function tf = ignoreLogging(self)
@@ -142,12 +149,14 @@ classdef logging < handle
       p.addParameter('logLevel', self.logLevel);
       p.addParameter('commandWindowLevel', self.commandWindowLevel);
       p.addParameter('datefmt', self.datefmt_);
+      p.addParameter('bufferingSize', 1);
       p.parse(name, varargin{:});
       r = p.Results; 
       
       self.name = r.name;
       self.commandWindowLevel = r.commandWindowLevel;
       self.datefmt = r.datefmt;
+      self.setBufferingSize(r.bufferingSize);
       if ~isempty(r.path)
         self.setFilename(r.path);  % Opens the log file.
         self.logLevel = r.logLevel;
@@ -184,7 +193,13 @@ classdef logging < handle
       end
 
       if self.logLevel_ <= level && self.logfid > -1
-        fprintf(self.logfid, logline);
+        self.bufferedMessages_(self.bufferCursor_) = logline;
+        if self.bufferCursor_ == numel(self.bufferedMessages_)
+          cellfun(@(x) fprintf(self.logfid, x), self.bufferedMessages_);
+	  self.bufferCursor_ = 1;
+        else
+          self.bufferCursor_ = self.bufferCursor_ + 1;
+        end
       end
     end        
     
@@ -219,6 +234,20 @@ classdef logging < handle
     
     function level = get.commandWindowLevel(self)
       level = self.commandWindowLevel_;
+    end
+
+    function set.bufferingSize(self, bufferSize)
+      validateattribute(bufferSize, {'numeric'}, {'scalar', 'integer', 'nonzero', 'positive'});
+      n = numel(self.bufferedMessages_);
+      if bufferSize > n 
+        self.bufferedMessages_ = [self.bufferedMessages_ cell(bufferSize - n)];
+      else
+        self.bufferedMessages_ = self.bufferedMessages_(1:bufferSize);
+      end
+    end
+
+    function bufferSize = get.bufferingSize(self)
+      bufferSize = numel(self.bufferedMessages_);
     end
         
         
