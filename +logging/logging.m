@@ -193,7 +193,7 @@ classdef logging < handle
       end
 
       if self.logLevel_ <= level && self.logfid > -1
-        self.bufferedMessages_(self.bufferCursor_) = logline;
+        self.bufferedMessages_{self.bufferCursor_} = logline;
         if self.bufferCursor_ == numel(self.bufferedMessages_)
           cellfun(@(x) fprintf(self.logfid, x), self.bufferedMessages_);
 	  self.bufferCursor_ = 1;
@@ -240,7 +240,7 @@ classdef logging < handle
       validateattributes(bufferSize, {'numeric'}, {'scalar', 'integer', 'nonzero', 'positive'});
       n = numel(self.bufferedMessages_);
       if bufferSize > n 
-        self.bufferedMessages_ = [self.bufferedMessages_ cell(bufferSize - n)];
+        self.bufferedMessages_ = [self.bufferedMessages_ cell(1, bufferSize - n)];
       else
         self.bufferedMessages_ = self.bufferedMessages_(1:bufferSize);
       end
