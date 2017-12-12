@@ -57,6 +57,8 @@ The available arguments are:
   This contains the date/time format string used by the logs.
   The format must be compatible with the built-in `datestr` function.
   This must be a string.
+* `bufferingSize` : set the number buffered logging lines berfore writing to file.
+  Must be a positive integer. 
 
 If `logger` is an instance of the `logging` class, the following methods can be used
 to log output at different levels:
