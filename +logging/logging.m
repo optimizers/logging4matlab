@@ -237,7 +237,7 @@ classdef logging < handle
     end
 
     function set.bufferingSize(self, bufferSize)
-      validateattribute(bufferSize, {'numeric'}, {'scalar', 'integer', 'nonzero', 'positive'});
+      validateattributes(bufferSize, {'numeric'}, {'scalar', 'integer', 'nonzero', 'positive'});
       n = numel(self.bufferedMessages_);
       if bufferSize > n 
         self.bufferedMessages_ = [self.bufferedMessages_ cell(bufferSize - n)];
