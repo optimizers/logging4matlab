@@ -99,34 +99,34 @@ classdef logging < handle
         tf = self.commandWindowLevel_ == self.OFF && self.logLevel_ == self.OFF;
     end
 
-    function trace(self, message)
+    function trace(self, varargin)
       [caller_name, ~] = self.getCallerInfo(self);
-      self.writeLog(self.TRACE, caller_name, message);
+      self.writeLog(self.TRACE, caller_name, varargin{:});
     end
 
-    function debug(self, message)
+    function debug(self, varargin)
       [caller_name, ~] = self.getCallerInfo(self);
-      self.writeLog(self.DEBUG, caller_name, message);
+      self.writeLog(self.DEBUG, caller_name, varargin{:});
     end
 
-    function info(self, message)
+    function info(self, varargin)
       [caller_name, ~] = self.getCallerInfo(self);
-      self.writeLog(self.INFO, caller_name, message);
+      self.writeLog(self.INFO, caller_name, varargin{:});
     end
 
-    function warn(self, message)
+    function warn(self, varargin)
       [caller_name, ~] = self.getCallerInfo(self);
-      self.writeLog(self.WARNING, caller_name, message);
+      self.writeLog(self.WARNING, caller_name, varargin{:});
     end
 
-    function error(self, message)
+    function error(self, varargin)
       [caller_name, ~] = self.getCallerInfo(self);
-      self.writeLog(self.ERROR, caller_name, message);
+      self.writeLog(self.ERROR, caller_name, varargin{:});
     end
 
-    function critical(self, message)
+    function critical(self, varargin)
       [caller_name, ~] = self.getCallerInfo(self);
-      self.writeLog(self.CRITICAL, caller_name, message);
+      self.writeLog(self.CRITICAL, caller_name, varargin{:});
     end
 
     function self = logging(name, varargin)
@@ -165,7 +165,12 @@ classdef logging < handle
       end
     end
 
-    function writeLog(self, level, caller, message)
+    function writeLog(self, level, caller, message, varargin)
+        
+      if nargin > 4
+          message = sprintf(message, varargin{:});
+      end
+        
       level = self.getLevelNumber(level);
       if self.commandWindowLevel_ <= level || self.logLevel_ <= level
         timestamp = datestr(now, self.datefmt_);
