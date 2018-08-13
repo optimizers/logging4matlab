@@ -39,13 +39,7 @@ classdef (SharedTestFixtures={ ...
                 'Hello world 2');
         end
         
-        function testLoggingWithVariableNumberOfInputs(testCase)
-            % Warning: this test does not check the actual outputs logging
-            % prints using fprintf. However, the test would fail if any
-            % error occurs, so is still useful and can be used for manual
-            % verification. TODO log in a file so that we can automatically
-            % test.
-            
+        function testLoggingWithVariableNumberOfInputs(testCase)            
             logfile_name = [testCase.logger_name '.log'];
                         
             testCase.l.setFilename(logfile_name);
