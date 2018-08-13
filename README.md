@@ -162,4 +162,4 @@ Output to either the command window or a file can be suppressed with `logging.lo
 
 # Tests
 
-Invoke `runtests(test)` in a MATLAB prompt to run the unit tests.
+Invoke `runtests('test')` in a MATLAB prompt to run the unit tests.
