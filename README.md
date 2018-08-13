@@ -77,7 +77,7 @@ to log output at different levels:
   
 The following utility methods are also available:
 
-* `logger.setFileName(string)`: set the log file to `string`.
+* `logger.setFilename(string)`: set the log file to `string`.
   This can be used to specify or change the file logs are saved to.
 * `logger.setCommandWindowLevel(level)`: set the command window log level to `level`.
   Only log entries with a level greater than or equal to `level` will be displayed.
@@ -127,6 +127,13 @@ logging.info 2016-09-14 15:10:06,049 INFO     life is just peachy
 logging.critical 2016-09-14 15:12:37,652 CRITICAL run away!
 ```
 
+Use formatting for logged messages similar to `sprintf` or `fprintf`
+
+```matlab
+>> logger.critical('Item %d (%s) not found', 217, 'foo');
+logging.critical 2016-09-14 15:12:37,652 CRITICAL Item 217 (foo) not found
+```
+
 A logger's assigned level for the command window (or terminal) can be changed:
 
 ```matlab
@@ -152,3 +159,7 @@ Output to either the command window or a file can be suppressed with `logging.lo
    Currently, no, but feel free to submit a pull request!
 3. *Can I change the format string used by loggers?*
    Currently, no, but feel free to submit a pull request!
+
+# Tests
+
+Invoke `runtests(test)` in a MATLAB prompt to run the unit tests.

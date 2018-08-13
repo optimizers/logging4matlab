@@ -167,16 +167,11 @@ classdef logging < handle
 
     function writeLog(self, level, caller, message, varargin)
         
-      if nargin > 4
-          message = sprintf(message, varargin{:});
-      end
-        
       level = self.getLevelNumber(level);
       if self.commandWindowLevel_ <= level || self.logLevel_ <= level
         timestamp = datestr(now, self.datefmt_);
         levelStr = logging.logging.levels(level);
-       
-        logline = sprintf(self.logfmt, caller, timestamp, levelStr, self.getMessage(message));
+        logline = sprintf(self.logfmt, caller, timestamp, levelStr, self.getMessage(message, varargin{:}));
       end
 
       if self.commandWindowLevel_ <= level
@@ -247,11 +242,16 @@ classdef logging < handle
       end
     end
       
-    function message = getMessage(~, message)
+    function message = getMessage(~, message, varargin)
     
       if isa(message, 'function_handle')
         message = message();
       end
+      
+      if nargin > 2
+        message = sprintf(message, varargin{:});
+      end
+      
       [rows, ~] = size(message);
       if rows > 1
         message = sprintf('\n %s', evalc('disp(message)'));
